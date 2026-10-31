@@ -50,3 +50,30 @@ def health_check():
 
 # Mount versioned API router
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+# Static Frontend SPA Serving (Single-Service Full-Stack Deployment)
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# Check potential frontend dist paths
+possible_dist_dirs = [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist")),
+    os.path.abspath(os.path.join(os.getcwd(), "frontend", "dist")),
+    os.path.abspath(os.path.join(os.getcwd(), "..", "frontend", "dist")),
+]
+frontend_dist = next((d for d in possible_dist_dirs if os.path.exists(d)), None)
+
+if frontend_dist and os.path.exists(frontend_dist):
+    assets_dir = os.path.join(frontend_dist, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="frontend-assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_frontend_spa(full_path: str):
+        # Allow API routes, docs, and health checks to pass through
+        if full_path.startswith("api") or full_path.startswith("docs") or full_path == "openapi.json" or full_path == "health":
+            return None
+        file_target = os.path.join(frontend_dist, full_path)
+        if os.path.exists(file_target) and os.path.isfile(file_target):
+            return FileResponse(file_target)
+        return FileResponse(os.path.join(frontend_dist, "index.html"))

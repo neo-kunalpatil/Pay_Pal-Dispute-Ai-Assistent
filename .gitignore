@@ -6,8 +6,8 @@
 
 # Node / Frontend
 node_modules/
-dist/
-dist-ssr/
+!frontend/dist/
+!frontend/dist/**
 *.local
 .npm
 
@@ -48,3 +48,4 @@ htmlcov/
 .idea/
 .DS_Store
 Thumbs.db
+
