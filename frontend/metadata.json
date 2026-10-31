@@ -1,0 +1,6 @@
+{
+  "name": "DisputePilot AI",
+  "description": "AI-powered PayPal payment dispute investigation and evidence management platform for online merchants.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+storage/uploads/*
+!storage/uploads/.gitkeep
+disputepilot.db
+disputepilot.db-journal
+*.log
