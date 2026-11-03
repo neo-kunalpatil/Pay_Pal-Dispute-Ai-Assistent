@@ -141,7 +141,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              {recentActivities.map((act) => (
+              {recentActivities.map((act: any) => (
                 <div key={act.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50/70 border border-slate-200 text-xs">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span className="w-2 h-2 rounded-full bg-[#0070BA] shrink-0"></span>
@@ -166,7 +166,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="space-y-2.5">
-              {topMerchants.map((m) => (
+              {topMerchants.map((m: any) => (
                 <div
                   key={m.rank}
                   className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-xs"

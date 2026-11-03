@@ -8,15 +8,17 @@ interface ResponseSubmitModalProps {
   isOpen: boolean;
   onClose: () => void;
   dispute: Dispute;
-  attachedDocs: EvidenceDocument[];
-  onConfirmSubmit: () => Promise<void>;
+  attachedDocs?: EvidenceDocument[];
+  onConfirm?: () => Promise<void>;
+  onConfirmSubmit?: () => Promise<void>;
 }
 
 export const ResponseSubmitModal: React.FC<ResponseSubmitModalProps> = ({
   isOpen,
   onClose,
   dispute,
-  attachedDocs,
+  attachedDocs = [],
+  onConfirm,
   onConfirmSubmit
 }) => {
   const [confirmed, setConfirmed] = useState(false);
@@ -28,7 +30,8 @@ export const ResponseSubmitModal: React.FC<ResponseSubmitModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      await onConfirmSubmit();
+      const fn = onConfirmSubmit || onConfirm;
+      if (fn) await fn();
       
       // Fire celebration confetti
       try {
