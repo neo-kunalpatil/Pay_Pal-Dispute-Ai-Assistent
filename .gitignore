@@ -8,6 +8,8 @@
 node_modules/
 !frontend/dist/
 !frontend/dist/**
+!backend/dist/
+!backend/dist/**
 *.local
 .npm
 
@@ -23,7 +25,11 @@ venv/
 ENV/
 build/
 develop-eggs/
-dist/
+# dist/
+!backend/dist/
+!backend/dist/**
+!frontend/dist/
+!frontend/dist/**
 downloads/
 eggs/
 .eggs/
