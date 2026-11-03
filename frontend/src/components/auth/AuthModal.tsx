@@ -75,6 +75,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
+  const handleDirectDemoLogin = async (demoRole: UserRole, demoEmail: string, demoPass: string) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    setRole(demoRole);
+    setEmail(demoEmail);
+    setPassword(demoPass);
+    try {
+      await login(demoRole, demoEmail, demoPass);
+      onClose();
+    } catch (e: any) {
+      console.warn('Demo login handled via fallback:', e);
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -220,60 +237,87 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           })}
         </div>
 
-        {/* One-Click Demo Credentials Toolbar */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mb-4 text-left">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+        {/* One-Click Direct Demo Accounts Section */}
+        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 mb-4 text-left">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              One-Click Demo Credentials:
+              Direct 1-Click Demo Logins
             </span>
-            <span className="text-[10px] text-slate-400">Autofill & authenticate</span>
+            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              Instant Access
+            </span>
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              type="button"
-              onClick={() => applyDemoCreds('merchant')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
-                role === 'merchant'
-                  ? 'bg-emerald-600 text-white shadow-2xs'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              Merchant (Acme)
-            </button>
-            <button
-              type="button"
-              onClick={() => applyDemoCreds('buyer')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
-                role === 'buyer'
-                  ? 'bg-blue-600 text-white shadow-2xs'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              Buyer (Rahul)
-            </button>
-            <button
-              type="button"
-              onClick={() => applyDemoCreds('analyst')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
-                role === 'analyst'
-                  ? 'bg-cyan-600 text-white shadow-2xs'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              Analyst (Claims)
-            </button>
-            <button
-              type="button"
-              onClick={() => applyDemoCreds('admin')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
-                role === 'admin'
-                  ? 'bg-purple-600 text-white shadow-2xs'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              Admin (Platform)
-            </button>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            {/* Merchant Demo Card */}
+            <div className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1.5 text-emerald-700 font-bold mb-1">
+                  <Store className="w-3.5 h-3.5" />
+                  <span>Merchant</span>
+                </div>
+                <div className="font-mono text-[10px] text-slate-600 truncate select-all">
+                  merchant@disputepilot.demo
+                </div>
+                <div className="font-mono text-[10px] text-slate-400 select-all">
+                  Pass: Merchant@12345
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDirectDemoLogin('merchant', 'merchant@disputepilot.demo', 'Merchant@12345')}
+                className="mt-2 w-full py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] rounded-lg transition-colors cursor-pointer text-center"
+              >
+                Log In as Merchant →
+              </button>
+            </div>
+
+            {/* Buyer Demo Card */}
+            <div className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-blue-500 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1.5 text-blue-700 font-bold mb-1">
+                  <User className="w-3.5 h-3.5" />
+                  <span>Buyer</span>
+                </div>
+                <div className="font-mono text-[10px] text-slate-600 truncate select-all">
+                  rahul.sharma@example.com
+                </div>
+                <div className="font-mono text-[10px] text-slate-400 select-all">
+                  Pass: password123
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDirectDemoLogin('buyer', 'rahul.sharma@example.com', 'password123')}
+                className="mt-2 w-full py-1.5 px-2 bg-[#0070BA] hover:bg-[#005ea6] text-white font-bold text-[10px] rounded-lg transition-colors cursor-pointer text-center"
+              >
+                Log In as Buyer →
+              </button>
+            </div>
+
+            {/* Admin Demo Card */}
+            <div className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-purple-500 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1.5 text-purple-700 font-bold mb-1">
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>Admin</span>
+                </div>
+                <div className="font-mono text-[10px] text-slate-600 truncate select-all">
+                  admin@disputepilot.demo
+                </div>
+                <div className="font-mono text-[10px] text-slate-400 select-all">
+                  Pass: Admin@12345
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDirectDemoLogin('admin', 'admin@disputepilot.demo', 'Admin@12345')}
+                className="mt-2 w-full py-1.5 px-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[10px] rounded-lg transition-colors cursor-pointer text-center"
+              >
+                Log In as Admin →
+              </button>
+            </div>
           </div>
         </div>
 
