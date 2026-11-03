@@ -82,13 +82,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     try {
       if (mode === 'signup') {
-        await register({
-          fullName: name.trim(),
-          businessName: businessName.trim() || `${name.trim()}'s Store`,
-          email: email.trim(),
-          password,
-          role
-        });
+        try {
+          await register({
+            fullName: name.trim(),
+            businessName: businessName.trim() || `${name.trim()}'s Store`,
+            email: email.trim(),
+            password,
+            role
+          });
+        } catch (regErr: any) {
+          const errMsg = (regErr.message || '').toLowerCase();
+          if (errMsg.includes('already exists') || errMsg.includes('duplicate') || errMsg.includes('registered')) {
+            // Seamlessly log in if account was already created
+            await login(role, email.trim(), password);
+          } else {
+            throw regErr;
+          }
+        }
       } else {
         await login(role, email.trim(), password);
       }

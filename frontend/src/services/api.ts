@@ -2,10 +2,19 @@
  * Centralized API service layer connecting DisputePilot AI Frontend to FastAPI Backend
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
-  (typeof window !== 'undefined' && window.location.port === '5173' 
-    ? 'http://localhost:8000/api/v1' 
-    : '/api/v1');
+const getApiBaseUrl = (): string => {
+  if (typeof window !== 'undefined') {
+    // If running on local Vite dev server port 5173, point to local backend
+    if (window.location.port === '5173') {
+      return 'http://localhost:8000/api/v1';
+    }
+    // On production (Render or any hosted domain), use current origin's /api/v1
+    return `${window.location.origin}/api/v1`;
+  }
+  return '/api/v1';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 class ApiService {
   private getHeaders(): HeadersInit {
