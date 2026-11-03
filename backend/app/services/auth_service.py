@@ -29,21 +29,39 @@ class AuthService:
     def register(self, db: Session, req: RegisterRequest) -> Token:
         existing = db.query(User).filter(User.email == req.email).first()
         if existing:
-            raise DisputePilotException("User with this email already exists")
+            # If account already exists and password matches, authenticate smoothly
+            if verify_password(req.password, existing.password_hash):
+                token = create_access_token(existing.id)
+                m = db.query(Merchant).filter(Merchant.id == existing.merchant_id).first() if existing.merchant_id else None
+                return Token(
+                    access_token=token,
+                    token_type="bearer",
+                    user_id=existing.id,
+                    email=existing.email,
+                    role=existing.role,
+                    merchant_id=existing.merchant_id or "",
+                    business_name=m.business_name if m else "DisputePilot Platform"
+                )
+            raise DisputePilotException("User with this email already exists. Please log in.")
 
         merchant_id = None
         business_name = req.business_name or f"{req.full_name}'s Account"
 
         if req.role == "merchant":
-            merchant = Merchant(
-                business_name=business_name,
-                email=req.email,
-                country=req.country or "US",
-                currency=req.currency or "USD"
-            )
-            db.add(merchant)
-            db.flush()
-            merchant_id = merchant.id
+            existing_merchant = db.query(Merchant).filter(Merchant.email == req.email).first()
+            if existing_merchant:
+                merchant_id = existing_merchant.id
+                business_name = existing_merchant.business_name
+            else:
+                merchant = Merchant(
+                    business_name=business_name,
+                    email=req.email,
+                    country=req.country or "US",
+                    currency=req.currency or "USD"
+                )
+                db.add(merchant)
+                db.flush()
+                merchant_id = merchant.id
         else:
             default_m = db.query(Merchant).first()
             merchant_id = default_m.id if default_m else None

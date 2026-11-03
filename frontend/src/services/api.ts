@@ -37,8 +37,20 @@ class ApiService {
       body: JSON.stringify({ email, password, role }),
     });
     if (!res.ok) {
-      const errData = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(errData.detail || 'Login failed');
+      let message = 'Login failed';
+      try {
+        const errData = await res.json();
+        if (typeof errData.detail === 'string') {
+          message = errData.detail;
+        } else if (Array.isArray(errData.detail) && errData.detail.length > 0) {
+          message = errData.detail.map((e: any) => e.msg || e.message || String(e)).join(', ');
+        } else if (errData.message) {
+          message = errData.message;
+        }
+      } catch (e) {
+        message = res.statusText || 'Login failed';
+      }
+      throw new Error(message);
     }
     const data = await res.json();
     if (data.access_token) {
@@ -68,8 +80,20 @@ class ApiService {
       }),
     });
     if (!res.ok) {
-      const errData = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(errData.detail || 'Registration failed');
+      let message = 'Registration failed';
+      try {
+        const errData = await res.json();
+        if (typeof errData.detail === 'string') {
+          message = errData.detail;
+        } else if (Array.isArray(errData.detail) && errData.detail.length > 0) {
+          message = errData.detail.map((e: any) => e.msg || e.message || String(e)).join(', ');
+        } else if (errData.message) {
+          message = errData.message;
+        }
+      } catch (e) {
+        message = res.statusText || 'Registration failed';
+      }
+      throw new Error(message);
     }
     const data = await res.json();
     if (data.access_token) {
